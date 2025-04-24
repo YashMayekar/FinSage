@@ -1,5 +1,6 @@
 // src/app/page.tsx
-export default function Transactions() {
+
+export default function Goals() {
   return (
     <div className="rounded-lg shadow p-6">
       <h1 className="text-2xl font-bold">Welcome to Finsage</h1>

@@ -1,7 +1,7 @@
 // page.tsx
 'use client'
 import dynamic from "next/dynamic"
-const AreaChartComponent = dynamic(() => import('@/components/chart-area-interactive'), { ssr: false })
+const AreaChartComponent = dynamic(() => import('@/components/analytics/chart-area-interactive'), { ssr: false })
 import { useGeneratedData } from "@/hooks/Data-Generator";
 import TopTransactionsChart from "@/components/analytics/Pie-chart";
 import MonthlyStackedBarChart from "@/components/analytics/Bar-Chart";

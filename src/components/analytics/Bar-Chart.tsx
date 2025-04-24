@@ -1,16 +1,19 @@
 "use client"
-
+import { useLocalStorage } from "@/hooks/useLocalStorage"
+import { STORAGE_KEY } from "../TransactionClassifier"
 import { useTransactions } from "@/hooks/useTransactions"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { getRecommendedDataSource } from "@/lib/dataSourceChecker"
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
 interface Transaction {
-  amount: number;
+  id: string | number;
   date: string;
+  amount: number;
   type: string;
-  [key: string]: any;
+  description?: string | null;
 }
 
 interface MonthlyData {
@@ -19,60 +22,100 @@ interface MonthlyData {
   total: number;
 }
 
+type DataSource = "local" | "api";
+
 export default function MonthlyStackedBarChart() {
-  const { transactions, isLoading, error, mutate } = useTransactions();
+  // Local storage transactions
+  const dataSource = getRecommendedDataSource(12); // 12 hour freshness window
+
+  // Local storage transactions
+  const [localTransactions] = useLocalStorage<Transaction[]>(STORAGE_KEY, []);
+  
+  // API transactions with proper memoization
+  const { transactions: apiTransactions, isLoading, error } = useTransactions()
+  const memoizedApiTransactions = useMemo(() => apiTransactions || [], [apiTransactions]);
+  
+  // Determine which transactions to use
+  const transactions = dataSource === "local" ? localTransactions : memoizedApiTransactions;
+  
   const [chartData, setChartData] = useState<MonthlyData[]>([])
 
   // Process transaction data to group by month and type
   useEffect(() => {
-    if (!transactions || transactions.length === 0) return;
+    if (!transactions || transactions.length === 0 || !transactions[0]?.date) {
+      setChartData([]);
+      return;
+    }
 
-    // First get all unique types
-    const types = Array.from(new Set(transactions.map((tx: any) => tx.type)));
+    // Get all unique types safely
+    const types = Array.from(new Set(
+      transactions
+        .map((tx: any) => tx?.type)
+        .filter(Boolean) as string[]
+    ));
     
     // Group by month and type
     const monthlyData: Record<string, MonthlyData> = {};
 
-    transactions.forEach((tx: Transaction) => {
-      const date = new Date(tx.date);
-      const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+    transactions.forEach((tx: any) => {
+      if (!tx?.date) return;
       
-      if (!monthlyData[monthYear]) {
-        monthlyData[monthYear] = { month: monthYear, total: 0 };
-        // Initialize all types to 0
-        types.forEach((type: any) => {
-          monthlyData[monthYear][type] = 0;
-        });
+      try {
+        const date = new Date(tx.date);
+        if (isNaN(date.getTime())) return;
+        
+        const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        if (!monthlyData[monthYear]) {
+          monthlyData[monthYear] = { month: monthYear, total: 0 };
+          // Initialize all types to 0
+          types.forEach(type => {
+            monthlyData[monthYear][type] = 0;
+          });
+        }
+        
+        // Add absolute amount to the corresponding type
+        const amount = Math.abs(Number(tx.amount) || 0);
+        monthlyData[monthYear][tx.type] = (Number(monthlyData[monthYear][tx.type]) || 0) + amount;
+        monthlyData[monthYear].total += amount;
+      } catch (e) {
+        console.error('Error processing transaction:', tx, e);
       }
-      
-      // Add amount to the corresponding type
-      const amount = Math.abs(tx.amount);
-      monthlyData[monthYear][tx.type] = (monthlyData[monthYear][tx.type] as number) + amount;
-      monthlyData[monthYear].total += amount;
     });
 
     // Convert to array and sort by month
     const sortedData = Object.values(monthlyData)
-      .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+      .sort((a, b) => a.month.localeCompare(b.month));
 
     setChartData(sortedData);
   }, [transactions]);
 
-  if (isLoading) return <div className="p-4 text-center">Loading transactions...</div>;
-  if (error){ 
-      mutate(); // Retry fetching data
-     return <div className="p-4 text-center text-red-500">Error loading data</div>;
+  if (isLoading && dataSource === "api") {
+    return <div className="p-4 text-center">Loading transactions...</div>;
   }
-  if (chartData.length === 0) return <div className="p-4 text-center">No transaction data available</div>;
 
-  // Get unique types from the first data point (all should have same types)
+  if (error && dataSource === "api") {
+    return <div className="p-4 text-center text-red-500">Error loading data</div>;
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <div className="p-4 text-center">
+        No transaction data available from {dataSource === "local" ? "local storage" : "API"}
+      </div>
+    );
+  }
+
+  // Get unique types safely
   const types = chartData.length > 0 
     ? Object.keys(chartData[0]).filter(key => key !== 'month' && key !== 'total')
     : [];
 
   return (
     <div className="bg-black rounded-xl shadow p-6 w-full">
-      <h2 className="text-xl font-semibold mb-4">Monthly Transaction Summary</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        Monthly Transaction Summary ({dataSource === "local" ? "Local Data" : "API Data"})
+      </h2>
       <p className="text-gray-400 text-sm mb-4">
         Stacked by transaction type with monthly totals
       </p>
@@ -92,7 +135,7 @@ export default function MonthlyStackedBarChart() {
               tick={{ fill: 'white' }}
               tickFormatter={(value: string) => {
                 const [year, month] = value.split('-');
-                const date = new Date(`${year}-${month}-01`);
+                const date = new Date(Number(year), Number(month)-1);
                 return `${date.toLocaleString('default', { month: 'short' })} ${year}`;
               }}
             />
@@ -112,7 +155,7 @@ export default function MonthlyStackedBarChart() {
               ]}
               labelFormatter={(label: string) => {
                 const [year, month] = label.split('-');
-                const date = new Date(`${year}-${month}-01`);
+                const date = new Date(Number(year), Number(month)-1);
                 return `${date.toLocaleString('default', { month: 'long' })} ${year}`;
               }}
             />
@@ -127,7 +170,7 @@ export default function MonthlyStackedBarChart() {
             
             {types.map((type, index) => (
               <Bar 
-                key={type}
+                key={`${type}-${index}`}
                 dataKey={type}
                 stackId="a"
                 fill={COLORS[index % COLORS.length]}
