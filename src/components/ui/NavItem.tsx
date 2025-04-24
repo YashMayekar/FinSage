@@ -1,5 +1,5 @@
 // src/components/NavItem.tsx
-import { NavItemType } from '@/types/layout';
+import { NavItemType } from '@/types/types';
 
 interface NavItemProps extends NavItemType {
   open: boolean;

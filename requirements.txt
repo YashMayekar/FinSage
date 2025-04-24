@@ -8,3 +8,4 @@ npm install -D @types/bcryptjs
 npm install --save-dev ts-node
 npm install swr
 npx shadcn@latest add chart
+npm install @google/generative-ai

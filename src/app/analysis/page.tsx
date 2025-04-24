@@ -1,10 +1,11 @@
-// src/app/page.tsx
+// app/page.tsx
+'use client';
+import TransactionTypes from '@/components/TransactionClassifier';
+
 export default function Analysis() {
   return (
-    <div className="rounded-lg shadow p-6">
-      <h1 className="text-2xl font-bold">Welcome to Finsage</h1>
-      <p className=" mt-2">Analysis
-      </p>
-    </div>
+    <main className="min-h-screen p-8">
+      <TransactionTypes />
+    </main>
   );
 }

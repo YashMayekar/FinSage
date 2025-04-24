@@ -12,7 +12,7 @@ import {
 } from 'react-icons/fi';
 import { Settings } from 'lucide-react';
 import NavItem from '@/components/ui/NavItem';
-import { SidebarSection } from '@/types/layout';
+import { SidebarSection } from '@/types/types';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function Sidebar () {

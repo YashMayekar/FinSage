@@ -10,6 +10,7 @@
     "seed": "ts-node prisma/seed.mjs"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-select": "^2.2.2",
     "@types/bcryptjs": "^3.0.0",
