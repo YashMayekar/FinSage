@@ -1,0 +1,10 @@
+npm install lucide-react
+npm install react-icons
+npm install tw-animate-css
+npm install papaparse date-fns lucide-react react-hot-toast
+npm install prisma @prisma/client
+npm install next-auth bcryptjs @types/bcryptjs
+npm install -D @types/bcryptjs
+npm install --save-dev ts-node
+npm install swr
+npx shadcn@latest add chart
