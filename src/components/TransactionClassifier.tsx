@@ -170,6 +170,7 @@ const TransactionTypes = () => {
         >
           {isProcessing ? `Processing... ${progress}%` : 'Classify All'}
         </button>
+        <h3 className="text-xl ml-auto self-center">Classify Transactions to perform the Analysis.</h3>
       </div>
 
       {/* Progress and Error */}
@@ -190,42 +191,42 @@ const TransactionTypes = () => {
 
       {/* Transactions Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classified Type</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {transactions.map((tx: any) => {
-              const classifiedType = getClassifiedType(tx.id);
-              return (
-                <tr key={tx.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tx.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tx.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tx.amount}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tx.description}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    {classifiedType ? (
-                      <span className={`${
-                        classifiedType === 'income' ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {classifiedType}
-                      </span>
-                    ) : (
-                      <span className="text-gray-500">Not classified</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+  <table className="min-w-full border border-white divide-y divide-white">
+    <thead className="">
+      <tr>
+        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Date</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Amount</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Classified Type</th>
+      </tr>
+    </thead>
+    <tbody className="divide-y divide-white">
+      {transactions.slice(0, 5).map((tx: any) => {
+        const classifiedType = getClassifiedType(tx.id);
+        return (
+          <tr key={tx.id}>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{tx.id}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{tx.date}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{tx.amount}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{tx.description}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              {classifiedType ? (
+                <span className={`${
+                  classifiedType === 'income' ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {classifiedType}
+                </span>
+              ) : (
+                <span className="text-white">Not classified</span>
+              )}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
     </div>
   );
 };

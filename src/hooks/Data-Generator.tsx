@@ -21,9 +21,13 @@ type GeneratedData = {
   }[];
 }[];
 
-const dataSource = getRecommendedDataSource(12);
+type DataSource = 'local' | 'api';
 
-export function useGeneratedData(): GeneratedData {
+interface UseGeneratedDataProps {
+  dataSource: DataSource;
+}
+
+export function useGeneratedData( { dataSource }: UseGeneratedDataProps  ): GeneratedData {
   // Local storage transactions
   const [localTransactions] = useLocalStorage<Transaction[]>(STORAGE_KEY, []);
   

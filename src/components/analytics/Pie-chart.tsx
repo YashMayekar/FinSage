@@ -54,9 +54,13 @@ const CenteredLabel = ({
   );
 };
 
+type DataSource = 'local' | 'api';
 
-export const TopTransactionsChart = () => {
-  const dataSource = getRecommendedDataSource(12); // 12 hour freshness window
+interface UseGeneratedDataProps {
+  dataSource: DataSource;
+}
+
+export const TopTransactionsChart = ({ dataSource }: UseGeneratedDataProps) => {
   // Local storage transactions
   const [localTransactions] = useLocalStorage<Transaction[]>(STORAGE_KEY, []);
   

@@ -22,12 +22,13 @@ interface MonthlyData {
   total: number;
 }
 
-type DataSource = "local" | "api";
+type DataSource = 'local' | 'api';
 
-export default function MonthlyStackedBarChart() {
-  // Local storage transactions
-  const dataSource = getRecommendedDataSource(12); // 12 hour freshness window
+interface UseGeneratedDataProps {
+  dataSource: DataSource;
+}
 
+export default function MonthlyStackedBarChart({ dataSource }: UseGeneratedDataProps) {
   // Local storage transactions
   const [localTransactions] = useLocalStorage<Transaction[]>(STORAGE_KEY, []);
   
