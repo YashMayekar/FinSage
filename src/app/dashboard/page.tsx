@@ -7,7 +7,7 @@ import TopTransactionsChart from "@/components/analytics/Pie-chart";
 import MonthlyStackedBarChart from "@/components/analytics/Bar-Chart";
 
 export default function DashBoard() {
-  const [dataSource, setDataSource] = useState<'local' | 'api'>('local');
+  const [dataSource, setDataSource] = useState<'local' | 'api'>('api');
   const generatedData = useGeneratedData({ dataSource });
 
   const toggleDataSource = () => {
