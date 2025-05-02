@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="border-b border-[var(--border)] p-4 flex items-center justify-between relative bg-[var(--background)]">
       <div className="flex items-center space-x-4">
-        <h1 className=" text-3xl font-bold text-[var(--foreground)]">FinSage</h1>
+        <h1 className="transition-text duration-300 text-3xl font-bold text-[var(--foreground)]">FinSage</h1>
       </div>
       <div className='ml-auto flex items-center space-x-4'>
         <ThemeSwitcher />

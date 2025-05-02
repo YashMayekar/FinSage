@@ -22,7 +22,6 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-
       <html lang="en" suppressHydrationWarning={true}>
         <body>
           <SignedOut >
@@ -33,7 +32,7 @@ export default function RootLayout({
           <SignedIn>
             <div className="flex h-screen">
               <Sidebar />
-              <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="transition-text duration-300 flex-1 flex flex-col overflow-hidden">
                 <Header />
                 <main className="flex-1 overflow-y-auto p-6">{children}</main>
               </div>
