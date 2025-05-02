@@ -1,0 +1,4 @@
+npm install @clerk/nextjs
+npm install next/navigation 
+npm install lucide-react 
+npm install react-icons

@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Arsenal:wght@400;700&family=League+Spartan:wght@100..900&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Theme Variables */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Correct way to override Tailwind theme colors manually */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Global Styles */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Arsenal', 'League Spartan', sans-serif;
+}
