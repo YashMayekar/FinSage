@@ -2,3 +2,18 @@ npm install @clerk/nextjs
 npm install next/navigation 
 npm install lucide-react 
 npm install react-icons
+npm install recharts
+npm install papaparse
+npm install date-fns
+npm install react-hot-toast
+npm install prisma --save-dev
+npm install @prisma/extension-accelerate @prisma/client
+npx prisma init # run prisma commands in separate single terminal
+# if still not working, run terminal as administrator and run.  
+npm install @clerk/clerk-sdk-node
+
+
+env file:
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+CLERK_SECRET_KEY
+DATABASE_URL
