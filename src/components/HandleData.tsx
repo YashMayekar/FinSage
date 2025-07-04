@@ -113,86 +113,84 @@ export default function HandleData() {
   }, [columnMapping, hasTypeColumn, incomeColumn, expenseColumn]);
   
   // Transform CSV data to our format
-  let i = 0;
   const transformData = () => {
     const skipped: number[] = [];
+
     const validData = csvData.filter((row, index) => {
       try {
-        console.log("columnMapping.date : ", columnMapping.date)
-        console.log("ROWcolumnMapping.date : ", row[columnMapping.date])
-
         const hasDate = columnMapping.date && row[columnMapping.date];
         let isValid = false;
-        
+
         if (hasTypeColumn) {
-          isValid = columnMapping.type && columnMapping.amount &&
-          row[columnMapping.type] && row[columnMapping.amount];
+          isValid =
+            columnMapping.type &&
+            columnMapping.amount &&
+            row[columnMapping.type] &&
+            row[columnMapping.amount];
         } else {
-          isValid = (incomeColumn && row[incomeColumn]) || 
-          (expenseColumn && row[expenseColumn]);
-         // console.log("ROW isValid: ", i += 1)
-         // works good
+          isValid =
+            (incomeColumn && row[incomeColumn]) ||
+            (expenseColumn && row[expenseColumn]);
         }
-        
+
         if (!hasDate || !isValid) {
           skipped.push(index);
           return false;
         }
-        
-        // Date validation
-        // const testDate = new Date(row[columnMapping.date]);
-        // if (isNaN(testDate.getTime())) {
-        //   console.warn(`Invalid date at row ${index + 1}: ${row[columnMapping.date]}`);
-        //   skipped.push(index);
-        //   return false;
-        // }
-        
+
         return true;
       } catch {
         skipped.push(index);
         return false;
       }
     });
-    
-    setSkippedRows(skipped);
-    
-    console.log("The length of validData: ", validData.length);
 
-    return validData.map(row => {
+    setSkippedRows(skipped);
+
+    return validData.map((row) => {
       const newRow: Partial<Transaction> = {
         date: formatDate(row[columnMapping.date]),
-        description: columnMapping.description ? 
-        String(row[columnMapping.description]).substring(0, 255) : 
-        null,
-        additionalData: null
+        description: columnMapping.description
+          ? String(row[columnMapping.description]).substring(0, 255)
+          : null,
+        additionalData: null,
       };
-      
-      // Additional data fallback
+
+      // ✅ Updated additionalData handling
       if (columnMapping.additionalData) {
-        newRow.additionalData = row[columnMapping.additionalData] ?? null;
+        const field = columnMapping.additionalData;
+        const value = row[field];
+        newRow.additionalData = `${field}: ${value ?? ''}`;
       } else {
         const additionalFields = headers.filter(
-          h => !Object.values(columnMapping).includes(h) &&
-          h !== incomeColumn &&
-          h !== expenseColumn
+          (h) =>
+            !Object.values(columnMapping).includes(h) &&
+            h !== incomeColumn &&
+            h !== expenseColumn
         );
+
         if (additionalFields.length > 0) {
           newRow.additionalData = additionalFields
-          .map(f => `${f}:${row[f]}`)
-          .join('; ');
+            .map((f) => `${f}: ${row[f] ?? ''}`)
+            .join('; ');
+        } else {
+          newRow.additionalData = null;
         }
       }
-      
+
       // Handle type & amount
       if (hasTypeColumn) {
         newRow.type = String(row[columnMapping.type]);
-        newRow.amount = parseFloat(String(row[columnMapping.amount]).replace(/,/g, '')) || 0;
+        newRow.amount =
+          parseFloat(String(row[columnMapping.amount]).replace(/,/g, '')) || 0;
       } else {
-        const income = incomeColumn ? 
-        parseFloat(String(row[incomeColumn]).replace(/,/g, '')) || 0 : 0;
-        const expense = expenseColumn ? 
-        parseFloat(String(row[expenseColumn]).replace(/,/g, '')) || 0 : 0;
-        
+        const income = incomeColumn
+          ? parseFloat(String(row[incomeColumn]).replace(/,/g, '')) || 0
+          : 0;
+        const expense = expenseColumn
+          ? parseFloat(String(row[expenseColumn]).replace(/,/g, '')) || 0
+          : 0;
+
         if (income > 0) {
           newRow.type = 'income';
           newRow.amount = income;
@@ -201,10 +199,11 @@ export default function HandleData() {
           newRow.amount = expense;
         }
       }
-      
+
       return newRow as Transaction;
     });
   };
+
   
   // Format date to DD-MM-YYYY
   const formatDate = (input: string): string => {

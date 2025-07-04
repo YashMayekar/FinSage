@@ -2,6 +2,32 @@ import { auth } from '@clerk/nextjs/server';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { AlignHorizontalDistributeCenterIcon } from 'lucide-react';
+
+
+
+
+
+
+export async function GET() {
+  const { userId } = await auth();
+  console.log('[FETCH] userId:', userId);
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const transactions = await prisma.transaction.findMany({    
+    where: { userId },
+    orderBy: { date: 'desc' },
+  });
+
+  console.log('[FETCH] transactions:', transactions.length);
+
+  return NextResponse.json(transactions);
+}
+
+
+
 /**
  * API route to process transactions.
  * Expects a POST request with a JSON body containing an array of transactions.
@@ -16,25 +42,36 @@ export async function POST(req: Request) {
   try {
     // Authenticate the user and create or retrieve the user in the database
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
-    const clerkUser = await clerkClient.users.getUser(userId);
-    const email = clerkUser?.emailAddresses?.[0]?.emailAddress;
-    if (!email) {
-      return NextResponse.json({ error: 'User email not found' }, { status: 400 });
-    }
-    let user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email,
-          name: clerkUser.firstName
-            ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim()
-            : clerkUser.username || 'Unnamed User',
-        },
-      });
-    }
+  if (!userId) {
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+  }
+
+  console.log('\n\n\n[UPLOAD] userId:', userId);
+
+  // Fetch user from Clerk
+  const clerkUser = await clerkClient.users.getUser(userId);
+  const email = clerkUser?.emailAddresses?.[0]?.emailAddress;
+
+  if (!email) {
+    return NextResponse.json({ error: 'User email not found' }, { status: 400 });
+  }
+
+  // Find user in DB by Clerk ID
+  let user = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!user) {
+    // If not found, create user using Clerk's ID as primary key
+    user = await prisma.user.create({
+      data: {
+        id: userId, // ✅ Use Clerk userId directly in Prisma DB
+        email,
+        name: clerkUser.firstName
+          ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim()
+          : clerkUser.username || 'Unnamed User',
+      },
+    });
+  }
+
 
 
     const { transactions: rawTransactions } = await req.json();
@@ -86,6 +123,8 @@ export async function POST(req: Request) {
 
         results.successful++;
         console.log(`Inserted ${results.successful}/${rawTransactions.length}`);
+        console.log(`Percentage Done: ${(results.successful/rawTransactions.length)*100}`);
+        
       } catch (error) {
         results.failed.push({
           transaction: rawTx,

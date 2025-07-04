@@ -11,6 +11,7 @@ npm install @prisma/extension-accelerate @prisma/client
 npx prisma init # run prisma commands in separate single terminal
 # if still not working, run terminal as administrator and run.  
 npm install @clerk/clerk-sdk-node
+npm install swr@latest
 
 
 env file:
