@@ -92,7 +92,8 @@ export default function Sidebar() {
         <div className="mb-4 flex items-center justify-between">
           <button
             onClick={() => setOpen(!open)}
-            className="p-3 rounded-lg hover:bg-[var(--sidebar-accent)] text-[var(--sidebar-foreground)]"
+            className="p-3 rounded-lg border border-transparent hover:cursor-pointer          
+          hover:border-[var(--sidebar-border)] text-[var(--sidebar-foreground)]"
           >
             <FiMenu className="text-lg" />
           </button>

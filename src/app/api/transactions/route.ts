@@ -2,7 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { AlignHorizontalDistributeCenterIcon } from 'lucide-react';
 
 
 
@@ -12,7 +11,6 @@ import { AlignHorizontalDistributeCenterIcon } from 'lucide-react';
 export async function GET() {
   const { userId } = await auth();
   console.log('[FETCH] userId:', userId);
-
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -20,9 +18,7 @@ export async function GET() {
     where: { userId },
     orderBy: { date: 'desc' },
   });
-
-  console.log('[FETCH] transactions:', transactions.length);
-
+    console.log('[FETCH] transactions:', transactions.length);
   return NextResponse.json(transactions);
 }
 
@@ -88,12 +84,8 @@ export async function POST(req: Request) {
     for (let i = 0; i < rawTransactions.length; i++) {
       const rawTx = rawTransactions[i];
       try {
-        const [day, month, year] = (rawTx.date || '').split('-');
-        const transactionDate = new Date(`${year}-${month}-${day}`);
+        const transactionDate = rawTx.date;
 
-        if (isNaN(transactionDate.getTime())) {
-          throw new Error(`Invalid date: "${rawTx.date}"`);
-        }
 
         const amount =
           typeof rawTx.amount === 'number'

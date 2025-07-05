@@ -6,9 +6,9 @@
   --radius: 0.625rem;
   /* Light Theme Colors (default) */
 
-  --background: rgb(250, 250, 250);
+  --background: rgba(255, 255, 255, 1);
   /* Light background */
-  --foreground: rgba(0, 0, 0, 1);
+  --foreground: rgba(0, 0, 0);
   /* Light text color */
   --sidebar: rgba(255, 255, 255, 1);
   /* Sidebar background */

@@ -209,18 +209,13 @@ export default function HandleData() {
   const formatDate = (input: string): string => {
     try {
       if (!input || typeof input !== 'string') return input;
-
       let date: Date | null = null;
-
       // Normalize separators
       const normalized = input.trim().replace(/\/|\\/g, '-');
-
       const parts = normalized.split('-');
-
       // Try DD-MM-YYYY or similar (if day is likely <= 31)
       if (parts.length === 3) {
         const [part1, part2, part3] = parts.map(p => parseInt(p, 10));
-        
         if (part1 > 31) {
           // Likely YYYY-MM-DD
           date = new Date(input);
@@ -235,9 +230,8 @@ export default function HandleData() {
         // Fallback to native parser (for ISO, etc.)
         date = new Date(normalized);
       }
-
+      // Validate date
       if (!date || isNaN(date.getTime())) throw new Error('Invalid date');
-
       const pad = (n: number) => n.toString().padStart(2, '0');
       return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()}`;
     } catch (error) {

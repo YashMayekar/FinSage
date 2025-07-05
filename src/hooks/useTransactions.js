@@ -1,33 +1,15 @@
-import useSWR from 'swr';
+'use client'; // 👈 Required for SWR (client-side hook)
+
+import useSWR from 'swr'; // ✅ SWR v2+ uses default export
 import React from 'react';
 
-// Basic fetcher with error handling
-const fetcher = async (url) => {
-  const res = await fetch(url);
-
-  if (!res.ok) {
-    const errorDetails = await res.json().catch(() => ({}));
-    const error = new Error(
-      errorDetails?.error || `Failed to fetch from ${url}`
-    );
-    error.info = errorDetails;
-    error.status = res.status;
-    throw error;
-  }
-
-  return res.json();
-};
+export const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 export function useTransactions() {
-  const {
-    data,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR('/api/transactions', fetcher, {
-    refreshInterval: 600000, // 10 minutes
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
+  const { data, error, isLoading, mutate } = useSWR('/api/transactions', fetcher, {
+    refreshInterval: 600000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
     revalidateIfStale: false,
   });
 
@@ -40,3 +22,4 @@ export function useTransactions() {
     mutate,
   };
 }
+export default useTransactions; // Export the hook for use in components
