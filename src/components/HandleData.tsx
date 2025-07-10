@@ -338,18 +338,18 @@ export default function HandleData() {
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">
           Transaction CSV Importer: {csvData.length > 0 ? `${csvData.length} Records` : 'No File Selected'}
         </h1>
       </div>
 
       {/* File Upload Section */}
-      <div className="card bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+      <div className="card p-4 rounded-lg shadow border border-[var(--border)]">
         <div className="flex items-center gap-4">
           <label className="flex-1 cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <div className="flex items-center gap-2 px-4 py-2 border border-[var(--border)] rounded-md ">
               <File className="h-5 w-5 text-blue-500" />
-              <span className="text-gray-700 dark:text-gray-300">
+              <span className="text-[var(--foreground)]">
                 {file ? file.name : 'Select CSV File'}
               </span>
             </div>
@@ -363,7 +363,7 @@ export default function HandleData() {
           </label>
           <button
             onClick={handleClear}
-            className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-md"
+            className="flex items-center gap-1 px-3 py-2 text-sm text-[var(--foreground)] border border-[var(--border)] rounded-md cursor-pointer"
           >
             <X className="h-4 w-4" />
             Clear
@@ -373,7 +373,7 @@ export default function HandleData() {
 
       {/* Type Configuration Section (Always Visible) */}
       {headers.length > 0 && (
-        <div className="card bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+        <div className="card p-4 rounded-lg shadow border ">
           <h2 className="text-lg font-semibold mb-3">Transaction Type Configuration</h2>
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
@@ -405,7 +405,7 @@ export default function HandleData() {
                   <select
                     value={incomeColumn}
                     onChange={(e) => setIncomeColumn(e.target.value)}
-                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                    className="w-full p-2 border rounded-md bg-[var(--background)]"
                   >
                     <option value="">Select column</option>
                     {headers.map(header => (
@@ -418,7 +418,7 @@ export default function HandleData() {
                   <select
                     value={expenseColumn}
                     onChange={(e) => setExpenseColumn(e.target.value)}
-                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                    className="w-full p-2 border rounded-md bg-[var(--background)] "
                   >
                     <option value="">Select column</option>
                     {headers.map(header => (
@@ -434,7 +434,7 @@ export default function HandleData() {
 
       {/* Column Mapping Section */}
       {headers.length > 0 && hasTypeColumn !== null && (
-        <div className="card bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+        <div className="card p-4 rounded-lg shadow border">
           <h2 className="text-lg font-semibold mb-4">Map CSV Columns</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Date (required) */}
@@ -445,7 +445,7 @@ export default function HandleData() {
               <select
                 value={columnMapping.date}
                 onChange={(e) => handleColumnMapping('date', e.target.value)}
-                className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                className="w-full p-2 border rounded-md bg-[var(--background)]"
               >
                 <option value="">Select date column</option>
                 {headers.map(header => (
@@ -460,7 +460,7 @@ export default function HandleData() {
               <select
                 value={columnMapping.description}
                 onChange={(e) => handleColumnMapping('description', e.target.value)}
-                className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                className="w-full p-2 border rounded-md bg-[var(--background)]"
               >
                 <option value="">Select description column</option>
                 {headers.map(header => (
@@ -479,7 +479,7 @@ export default function HandleData() {
                   <select
                     value={columnMapping.type}
                     onChange={(e) => handleColumnMapping('type', e.target.value)}
-                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                    className="w-full p-2 border rounded-md bg-[var(--background)]"
                   >
                     <option value="">Select type column</option>
                     {headers.map(header => (
@@ -494,7 +494,7 @@ export default function HandleData() {
                   <select
                     value={columnMapping.amount}
                     onChange={(e) => handleColumnMapping('amount', e.target.value)}
-                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                    className="w-full p-2 border rounded-md bg-[var(--background)]"
                   >
                     <option value="">Select amount column</option>
                     {headers.map(header => (
@@ -513,7 +513,7 @@ export default function HandleData() {
                 onChange={(e) => {
                   console.log(`Selected additional data column: ${e.target.value}`);
                   handleColumnMapping('additionalData', e.target.value)}}
-                className="w-full p-2 border rounded-md bg-white dark:bg-gray-700"
+                className="w-full p-2 border rounded-md bg-[var(--background)]"
               >
                 <option value="">Select column for additional data</option>
                 {headers.map(header => (
@@ -530,24 +530,24 @@ export default function HandleData() {
 
       {/* Preview Section */}
       {previewData.length > 0 && (
-        <div className="card bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+        <div className="card bg-[var(--background)] p-4 rounded-lg shadow border ">
           <h2 className="text-lg font-semibold mb-4">CSV Preview</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+            <table className="min-w-full border divide-y divide-[var(--foreground)] ">
+              <thead className="bg-[var(--background)] ">
                 <tr>
                   {headers.slice(0, 5).map(header => (
-                    <th key={header} className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <th key={header} className="px-4 py-2 text-[var(--foreground)] text-xm font-medium  uppercase tracking-wider">
                       {header}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-[var(--background)] divide-y divide-[var(--foreground)]">
                 {previewData.map((row, i) => (
                   <tr key={i}>
                     {headers.slice(0, 5).map(header => (
-                      <td key={`${i}-${header}`} className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 max-w-xs truncate">
+                      <td key={`${i}-${header}`} className="px-4 py-2 text-sm text-[var(--foreground)] max-w-xs truncate">
                         {row[header]?.toString() || '-'}
                       </td>
                     ))}
@@ -575,7 +575,7 @@ export default function HandleData() {
                 console.log('Data', transformedData);
 
               }}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md transition-colors "
             >
               Keep Data
             </button>
@@ -606,13 +606,13 @@ export default function HandleData() {
 
       {/* Status Messages */}
       {skippedRows.length > 0 && (
-        <div className="text-yellow-600 dark:text-yellow-400">
+        <div className="text-red-600">
           Note: Skipped {skippedRows.length} rows with missing/invalid data
         </div>
       )}
       
       {showDownloadPrompt && transformedData.length > 0 && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Download Transformed Data</h3>
             <p className="mb-4">
@@ -642,17 +642,21 @@ export default function HandleData() {
       {/* Prompt user to choose storage destination */}
       {storageChoicePrompt && transformedData.length > 0 && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
+          <div className="bg-[var(--background)] text-[var(--foreground)] p-6 rounded-lg shadow-xl max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Where do you want to store the data?</h3>
             <p className="mb-4">You can save the data locally or send it to the server.</p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => {
-                  localStorage.setItem('transformedTransactions', JSON.stringify(transformedData));
                   setStorageChoicePrompt(false);
-                  toast.success('Data saved to local storage.');
+                  try {
+                    localStorage.setItem('transformedTransactions', JSON.stringify(transformedData));
+                    toast.success('Data saved to local storage.');
+                  } catch (e) {
+                    console.warn('Could not save to localStorage:', e);
+                  }
                 }}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition-colors"
               >
                 Save Locally
               </button>
@@ -671,15 +675,6 @@ export default function HandleData() {
         </div>
       )}
 
-    </div>
-  );
-}
-
-// Helper component for cards
-function Card({ children, className = '' }: { children: React.ReactNode, className?: string }) {
-  return (
-    <div className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700 ${className}`}>
-      {children}
     </div>
   );
 }

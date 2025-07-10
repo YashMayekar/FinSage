@@ -1,5 +1,7 @@
 'use client';
 import HandleData from '@/components/HandleData';
+import RefreshTransactionsButton from '@/components/RefreshTransactionButton';
+import TransactionTable from '@/components/TransactionTable';
 import { forwardRef, InputHTMLAttributes } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
@@ -36,11 +38,14 @@ Button.displayName = "Button";
 export default function Transactions() {
 
   return (
-    <div className="max-w-6xl mx-auto p-6 flex flex-col gap-10">
-        {/* Function for handling csv file input*/}
-        <HandleData />
+    <div className="rounded-lg shadow p-3 gap-4">
+      {/* HandleData component to handle data input */}
+      <HandleData />
 
-
+      {/*Button for refreshing Transactions from the database */}
+      <RefreshTransactionsButton  className='flex justify-end'/>
+      {/* TransactionTable component to display transactions */}
+      <TransactionTable />
     </div>
   );
 }
