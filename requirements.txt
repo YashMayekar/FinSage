@@ -12,6 +12,12 @@ npx prisma init # run prisma commands in separate single terminal
 # if still not working, run terminal as administrator and run.  
 npm install @clerk/clerk-sdk-node
 npm install swr@latest
+pip install dotenv
+pip install sqlalchemy
+pip install fastapi  
+pip install uvicorn
+pip install psycopg[binary] 
+# python -m uvicorn main:app --reload  \\ TO RUN FASTAPI SERVER
 
 
 env file:
