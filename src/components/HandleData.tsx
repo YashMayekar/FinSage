@@ -30,8 +30,7 @@ export default function HandleData() {
     additionalData: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [previewData, setPreviewData] = useState<any[]>([]);
-  const [uploadComplete, setUploadComplete] = useState(false);
+  const [previewData, setPreviewData] = useState<Record<string, string | number | null>[]>([]);
   const [hasTypeColumn, setHasTypeColumn] = useState<boolean | null>(null);
   const [incomeColumn, setIncomeColumn] = useState<string>('');
   const [expenseColumn, setExpenseColumn] = useState<string>('');
@@ -42,10 +41,10 @@ export default function HandleData() {
   const [isSubmittingToServer, setIsSubmittingToServer] = useState(false);
 
 
-  // Derived values
-  const requiredFields = hasTypeColumn 
-    ? ['date', 'type', 'amount'] 
-    : ['date', incomeColumn, expenseColumn].filter(Boolean);
+  // // Derived values
+  // const requiredFields = hasTypeColumn 
+  //   ? ['date', 'type', 'amount'] 
+  //   : ['date', incomeColumn, expenseColumn].filter(Boolean);
 
   // Reset file input reference
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +58,6 @@ export default function HandleData() {
     setCsvData([]);
     setHeaders([]);
     setPreviewData([]);
-    setUploadComplete(false);
     setTransformedData([]);
     // setHasTypeColumn(null);
     // setIncomeColumn('');
@@ -79,13 +77,12 @@ export default function HandleData() {
     parse(selectedFile, {
       header: true,
       complete: (results) => {
-        const data = results.data as any[];
+        const data = results.data as Record<string, string>[];
 
         if (data.length > 0) {
           setCsvData(data);
           setHeaders(Object.keys(data[0]));
           setPreviewData(data.slice(0,5));
-          setUploadComplete(false);
           setHasTypeColumn(null);
         }
       },
@@ -313,25 +310,37 @@ export default function HandleData() {
 
 
   // Handle form submission
+    // Handle form submission
     const handleSubmit = () => {
-    if (!allRequiredFieldsMapped) {
-      toast.error('Please map all required fields before submitting');
-      return;
-    }
+      if (!allRequiredFieldsMapped) {
+        toast.error('Please map all required fields before submitting');
+        return;
+      }
 
-    setIsLoading(true);
-    try {
-      const data = transformData();
-      setTransformedData(data);
-      console.log("\nTHE SLICED TRANSACTION DATA: ", transformedData.length)
-      setStorageChoicePrompt(true); // Show prompt after successful transform
-      toast.success(`Transformed ${data.length} records (skipped ${skippedRows.length})`);
-    } catch (error) {
-      toast.error(`Error transforming data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+      try {
+        const data = transformData();
+        setTransformedData(data);
+
+        // ✅ Always save locally first
+        try {
+          localStorage.setItem('transformedTransactions', JSON.stringify(data));
+          toast.success(`Saved ${data.length} records locally (skipped ${skippedRows.length})`);
+        } catch (e) {
+          console.warn('Could not save to localStorage:', e);
+          toast.error('Failed to save locally');
+        }
+
+        // ✅ Now only prompt for cloud upload
+        setStorageChoicePrompt(true);
+
+      } catch {
+        toast.error('Error transforming data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
 
 
   return (
@@ -598,7 +607,7 @@ export default function HandleData() {
                 Processing...
               </span>
             ) : (
-              'Transform Data'
+              'Store Data'
             )}
           </button>
         )}
@@ -639,26 +648,20 @@ export default function HandleData() {
         </div>
       )}
 
-      {/* Prompt user to choose storage destination */}
+      {/* Prompt user to upload to server */}
       {storageChoicePrompt && transformedData.length > 0 && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--background)] text-[var(--foreground)] p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Where do you want to store the data?</h3>
-            <p className="mb-4">You can save the data locally or send it to the server.</p>
+            <h3 className="text-lg font-semibold mb-4">Upload Data to Cloud?</h3>
+            <p className="mb-4">
+              Your data has been saved locally. Do you also want to upload it to the server?
+            </p>
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => {
-                  setStorageChoicePrompt(false);
-                  try {
-                    localStorage.setItem('transformedTransactions', JSON.stringify(transformedData));
-                    toast.success('Data saved to local storage.');
-                  } catch (e) {
-                    console.warn('Could not save to localStorage:', e);
-                  }
-                }}
-                className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition-colors"
+                onClick={() => setStorageChoicePrompt(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
               >
-                Save Locally
+                Not Now
               </button>
               <button
                 onClick={() => {
@@ -674,6 +677,7 @@ export default function HandleData() {
           </div>
         </div>
       )}
+
 
     </div>
   );
