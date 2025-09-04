@@ -27,6 +27,7 @@ const getColorForType = (type: string, index: number) => {
   const typeColorMap: Record<string, string> = {
     income: "#22C55E", // green
     expense: "#EF4444", // red
+    savings: "#3B82F6", // blue
   };
   return typeColorMap[type] || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
 };
@@ -88,7 +89,9 @@ const TransactionChart = () => {
       totals[typeData.type] = typeData.data
         .filter((item) => new Date(item.date) >= startDate && new Date(item.date) <= endDate)
         .reduce((sum, item) => sum + item.amount, 0);
-    });
+      });
+      
+    totals["savings"] = (totals["income"] || 0) - (totals["expense"] || 0);
 
     const chartData = allDates
       .filter((date) => new Date(date) >= startDate && new Date(date) <= endDate)
@@ -98,6 +101,7 @@ const TransactionChart = () => {
           const transaction = typeData.data.find((item) => item.date === date);
           entry[typeData.type] = transaction ? transaction.amount : 0;
         });
+        entry.savings = (entry.income || 0) - (entry.expense || 0);
         return entry;
       });
 
@@ -225,7 +229,33 @@ const TransactionChart = () => {
                 stackId="1"
                 name={typeData.type}
               />
+              
             ))}
+            {/* <Area
+              type="natural"
+              dataKey="income"
+              stroke={getColorForType("income", 0)}
+              fill="url(#fill-income)"
+              stackId="1"
+              name="Income"
+            />
+            <Area
+              type="natural"
+              dataKey="expense"
+              stroke={getColorForType("expense", 1)}
+              fill="url(#fill-expense)"
+              stackId="1"
+              name="Expense"
+            />
+            <Area
+              type="natural"
+              dataKey="savings"
+              stroke={getColorForType("savings", 2)}
+              fill="url(#fill-savings)"
+              stackId="2" // keep separate so it overlays
+              name="Savings"
+            /> */}
+
           </AreaChart>
         </ResponsiveContainer>
       </div>

@@ -10,10 +10,8 @@ from dotenv import load_dotenv
 from typing import Dict, List
 import ollama
 import json
-from typing import Optional
 
 load_dotenv()
-
 # Load raw DB config from .env
 raw_database_url = os.getenv("DATABASE_URL")
 
@@ -64,9 +62,8 @@ def LLM(transactions: List[Dict]) -> List[Dict]:
 
 
 @app.get("/transactions")
-def get_transactions(user_id: str = Query(...),) -> Dict:
+def analyze_transactions(user_id: str = Query(...),) -> Dict:
     print("Fetching transactions for user:", user_id)
-    analyzed_transactions = []
     
     with SessionLocal() as session:
         # Select only the required columns
@@ -97,21 +94,33 @@ def get_transactions(user_id: str = Query(...),) -> Dict:
             for row in results
         ]
 
-        for tx in transactions[:10]:  # Process only the first 10 transactions
+        # Create a lookup dictionary for fast access to original transactions by ID
+        transaction_lookup = {tx["id"]: tx for tx in transactions}
+
+        analyzed_transactions = []
+
+        for tx in transactions:  # Process only the first 10 transactions
             print(f"\nAnalyzing transaction: {tx['id']}")
             analyzed_data = LLM([tx])
-            print(f"Analyzed data for {tx['id']}: {analyzed_data}") 
             try:
                 analyzed_json = json.loads(analyzed_data)
-                analyzed_transactions.extend(analyzed_json)
+                for item in analyzed_json:
+                    tx_id = item.get("id")
+                    if tx_id in transaction_lookup:
+                        original = transaction_lookup[tx_id]
+                        combined = {
+                            "id": tx_id,
+                            "type": item.get("type"),
+                            "category": item.get("category"),
+                            "date": original.get("date"),
+                            "amount": original.get("amount")
+                        }
+                        analyzed_transactions.append(combined)
+                    else:
+                        print(f"Warning: ID {tx_id} not found in original transactions.")
+                print(f"Analyzed data for {tx['id']}: {analyzed_transactions[-1]}") 
             except json.JSONDecodeError as e:
                 print(f"JSON decode error: {e}")
                 continue
 
-        return {
-            "userId": user_id,  
-            "analyzed transactions": analyzed_transactions
-        }
-    
-
-    
+        return {"analyzed transactions": analyzed_transactions}   

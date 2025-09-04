@@ -1,25 +1,55 @@
-'use client'; // 👈 Required for SWR (client-side hook)
+'use client';
 
-import useSWR from 'swr'; // ✅ SWR v2+ uses default export
+import useSWR from 'swr';
 import React from 'react';
+import { toast } from 'react-hot-toast';
 
 export const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 export function useTransactions() {
-  const { data, error, isLoading, mutate } = useSWR('/api/transactions', fetcher, {
-    refreshInterval: 600000,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    revalidateIfStale: false,
-  });
+  const [localData, setLocalData] = React.useState(null);
+  const [checkedLocal, setCheckedLocal] = React.useState(false);
 
-  const transactions = React.useMemo(() => data || [], [data]);
+  // ✅ Check localStorage first
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem('transformedTransactions');
+      if (stored) {
+        setLocalData(JSON.parse(stored));
+      } else {
+        toast('No local transactions found. Fetching from cloud…');
+      }
+    } catch (e) {
+      console.warn('Failed to read localStorage:', e);
+    } finally {
+      setCheckedLocal(true);
+    }
+  }, []);
+
+  // ✅ Only call SWR if no local data
+  const { data, error, isLoading, mutate } = useSWR(
+    !localData && checkedLocal ? '/api/transactions' : null,
+    fetcher,
+    {
+      refreshInterval: 600000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
+    }
+  );
+
+  // ✅ Merge logic: prefer localData if present
+  const transactions = React.useMemo(() => {
+    if (localData) return localData;
+    return data || [];
+  }, [localData, data]);
 
   return {
     transactions,
-    isLoading,
+    isLoading: !checkedLocal || (isLoading && !localData),
     error,
     mutate,
   };
 }
-export default useTransactions; // Export the hook for use in components
+
+export default useTransactions;

@@ -1,0 +1,94 @@
+I am working on creating a Personalized Financial Management application which takes the user's bank transactions and gives it to the meta-llama llm using ollama to perform analysis. I have the base model of llama3 in ollama i want to create a custom modell using it that will help in my financial analysis. write a base prompt for it and also make the llm so that the data flow is efficient and it give fast results 
+
+I'm giving the financial transaction to the llm which contain these main columns:
+###
+id 	       : String
+date           : String
+description    : String
+type           : String
+amount         : Float
+additionalData : String
+###
+
+1. the date column consist date in DD-MM-YYYY;
+2. the description column contains the basic description or name of the transaction;
+3. the type column has the type of transaction done, that is Income or Credit, Expense or Debit, Transfer, etc. it can contain many values, if the values are not Income or Credit, Expense or Debit. then llm should convert it to appropriate Income or Credit, Expense or Debit values;
+4. the amount contains the amount of transaction done;
+5. the additionalData contains some additional information the transaction table has. for example: if the original transaction file had a balance column which showed the balance after each transaction, then this processed transaction will consist this data in the additionalData column as "balance : 100", for each row. in short it consist the name of the extra column: with there value for each row. it might also consist multiple column with there value like, "column1: value1; column2: value2; column3: value3"
+
+So these are the columns that are going to the llm and i want the llm to analyze each value of the row and decide the best suitable category for each row, the number of category are as follows:
+###
+
+Income Categories:
+Salary
+Freelance Work
+Business Revenue
+Investments (Dividends, Stocks, etc.)
+Rental Income
+Bonuses
+Gifts
+Refunds/Reimbursements
+Passive Income (Royalties, Affiliate Earnings, etc.)
+Other Income
+
+Expense Categories:
+Housing & Utilities
+Rent/Mortgage
+Electricity
+Water
+Internet & Cable
+Gas
+Maintenance
+Food & Groceries
+Groceries
+Restaurants & Dining
+Coffee & Snacks
+Transportation
+Public Transport
+Fuel
+Car Loan/Lease
+Parking
+Vehicle Maintenance
+Health & Wellness
+Medical Bills
+Health Insurance
+Gym Membership
+Pharmacy & Medications
+Entertainment & Leisure
+Movies & Streaming Services
+Hobbies
+Concerts & Events
+Books & Magazines
+Personal & Family
+Clothing & Accessories
+Personal Care (Salon, Spa, etc.)
+Childcare & Education
+Gifts & Donations
+Debt & Loans
+Credit Card Payments
+Student Loans
+Personal Loans
+Mortgage Payments
+Insurance & Investments
+Life Insurance
+Vehicle Insurance
+Home Insurance
+Retirement Savings
+Stock & Crypto Investments
+Others
+Taxes
+Miscellaneous
+
+Savings Categories:
+Emergency Fund
+Retirement Savings
+Travel Fund
+Education Fund
+Home Purchase
+Car Purchase
+Business Investment
+Other Savings
+###
+
+
+At the end it shoud return the row id and the corresponding analysis
