@@ -160,8 +160,9 @@ const AnalyzeTransactions: React.FC<AnalyzeTransactionsProps> = ({ transactions:
     } catch (err) {
       const endTime = performance.now();
       console.error('Batch analysis failed:', err);
+      const message = err instanceof Error ? err.message : String(err);
       return { 
-        error: err.message || err.toString(), 
+        error: message, 
         duration: endTime - startTime 
       };
     }
