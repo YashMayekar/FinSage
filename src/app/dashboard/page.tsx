@@ -53,10 +53,11 @@ export default function Dashboard() {
     console.log("TEST\nRendering useTransactionAnalysis\n", { analysis });
 
     type DataPoint = { label: string; income?: number; expense?: number };
+    type WaterfallEntry = { label: string; base: number; value: number; type: "income" | "expense" };
 
-    function buildWaterfallData(data: DataPoint[]) {
+    function buildWaterfallData(data: DataPoint[]): WaterfallEntry[] {
     let cumulative = 0;
-    const result: unknown[] = [];
+    const result: WaterfallEntry[] = [];
 
     data.forEach((d) => {
         if (d.income) {
