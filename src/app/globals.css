@@ -1,26 +1,109 @@
-@import "tailwindcss";
+/* Global styles including system theme support (light/dark mode) and converted colors to RGBA */
+@import url('https://fonts.googleapis.com/css2?family=Arsenal:wght@400;700&family=League+Spartan:wght@100..900&display=swap');
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.625rem;
+  /* Light Theme Colors (default) */
+
+  --background: rgba(255, 255, 255, 1);
+  /* Light background */
+  --foreground: rgba(0, 0, 0);
+  /* Light text color */
+  --sidebar: rgba(255, 255, 255, 1);
+  /* Sidebar background */
+  --card: rgba(255, 255, 255, 1);
+  /* Card background */
+  --card-foreground: rgba(0, 0, 0, 1);
+  /* Card text */
+  --popover: rgba(255, 255, 255, 1);
+  /* Popover background */
+  --popover-foreground: rgba(0, 0, 0, 1);
+  /* Popover text */
+  --primary: rgba(33, 150, 243, 1);
+  /* Primary color (light blue) */
+  --primary-foreground: rgba(255, 255, 255, 1);
+  /* Text on primary background */
+  --secondary: rgba(233, 30, 99, 1);
+  /* Secondary color (pink) */
+  --secondary-foreground: rgba(255, 255, 255, 1);
+  /* Text on secondary background */
+  --muted: rgba(200, 200, 200, 1);
+  /* Muted color */
+  --muted-foreground: rgba(0, 0, 0, 1);
+  /* Muted text */
+  --accent: rgba(76, 175, 80, 1);
+  /* Accent color (green) */
+  --accent-foreground: rgba(255, 255, 255, 1);
+  /* Text on accent background */
+  --destructive: rgba(244, 67, 54, 1);
+  /* Destructive color (red) */
+  --border: rgba(230, 230, 230, 1);
+  /* Border color */
+  --input: rgba(240, 240, 240, 1);
+  /* Input field color */
+  --ring: rgba(33, 150, 243, 0.4);
+  /* Ring (focus) color */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+.dark {
+  /* Dark Theme Colors */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: rgba(18, 18, 18, 1);
+  /* Dark background */
+  --foreground: rgba(255, 255, 255, 1);
+  /* Dark text color */
+  --sidebar: rgb(20, 20, 20, 1);
+  /* Sidebar background */
+  --card: rgba(33, 33, 33, 1);
+  /* Card background */
+  --card-foreground: rgba(255, 255, 255, 1);
+  /* Card text */
+  --popover: rgba(33, 33, 33, 1);
+  /* Popover background */
+  --popover-foreground: rgba(255, 255, 255, 1);
+  /* Popover text */
+  --primary: rgba(33, 150, 243, 1);
+  /* Primary color (light blue) */
+  --primary-foreground: rgba(255, 255, 255, 1);
+  /* Text on primary background */
+  --secondary: rgba(233, 30, 99, 1);
+  /* Secondary color (pink) */
+  --secondary-foreground: rgba(255, 255, 255, 1);
+  /* Text on secondary background */
+  --muted: rgba(100, 100, 100, 1);
+  /* Muted color */
+  --muted-foreground: rgba(255, 255, 255, 1);
+  /* Muted text */
+  --accent: rgba(76, 175, 80, 1);
+  /* Accent color (green) */
+  --accent-foreground: rgba(255, 255, 255, 1);
+  /* Text on accent background */
+  --destructive: rgba(244, 67, 54, 1);
+  /* Destructive color (red) */
+  --border: rgba(50, 50, 50, 1);
+  /* Border color */
+  --input: rgba(60, 60, 60, 1);
+  /* Input field color */
+  --ring: rgba(33, 150, 243, 0.4);
+  /* Ring (focus) color */
 }
 
 body {
-  background: var(--background);
+  font-family: 'Arsenal', 'League Spartan', sans-serif;
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: var(--ring);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
 }
