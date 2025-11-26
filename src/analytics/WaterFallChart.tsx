@@ -25,9 +25,8 @@ const periodButtons = [
 ];
 
 // ✅ Custom Tooltip
-const CustomTooltip = ({
-  active,
-}: TooltipProps<ValueType, NameType>) => {
+const CustomTooltip = (props: TooltipProps<ValueType, NameType>) => {
+  const { active, payload, label } = props as any;
   if (active && payload && payload.length > 0) {
     const { type, value } = payload[1]?.payload || {};
     const formattedValue = `Rs. ${Math.abs(Number(value)).toLocaleString()}`;
