@@ -27,8 +27,6 @@ const periodButtons = [
 // ✅ Custom Tooltip
 const CustomTooltip = ({
   active,
-  payload,
-  label,
 }: TooltipProps<ValueType, NameType>) => {
   if (active && payload && payload.length > 0) {
     const { type, value } = payload[1]?.payload || {};

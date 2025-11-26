@@ -14,13 +14,12 @@ import { min } from "date-fns";
 const COLORS = ["#2563eb", "#16a34a", "#f97316"];
 
 export default function BudgetPage() {
-  const { analysis, isLoading } = useTransactionAnalysis({ mode: '30d', start: '', end: '' });
+  const { analysis } = useTransactionAnalysis({ mode: '30d', start: '', end: '' });
 
   const [goalName, setGoalName] = useState("");
   const [goalAmount, setGoalAmount] = useState<number>(0);
   const [savedAmount, setSavedAmount] = useState<number>(0);
 
-  if (isLoading) return <p className="p-6">Loading budget insights...</p>;
 
   const monthlyIncome = analysis?.summary?.avgMonthlyIncome || 0;
   const monthlyExpense = analysis?.summary?.avgMonthlyExpense || 0;

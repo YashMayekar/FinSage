@@ -4,7 +4,6 @@ recharts
 swr
 lucide-react
 papaparse
-@google/generative-ai
 react-markdown
-npm install @google/generative-ai
-npm install react-markdown
+react-markdown
+react-icons
