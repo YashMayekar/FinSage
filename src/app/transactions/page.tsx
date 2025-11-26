@@ -16,8 +16,6 @@ export default function Transactions() {
       {/* TransactionTable component to display transactions */}
       <TransactionTable />
       {/* Example usage of Input and Button */}
-      <Input placeholder="Test input" />
-      <Button>Test Button</Button>
     </div>
   );
 }
