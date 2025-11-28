@@ -107,3 +107,52 @@ body {
     color: var(--foreground);
   }
 }
+
+/* Replace your current print styles with this */
+@media print {
+  @page {
+    margin: 30px 0px 30px 0cm; /* Top, Right, Bottom, Left */
+    size: auto;
+  }
+  
+  /* Remove default browser margins and padding */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100%;
+  }
+  
+  /* Ensure your content uses full available space */
+  .printable-area {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+  
+  /* Add bottom space to your content */
+  .printable-area > div {
+    margin-bottom: 2cm;
+    min-height: calc(100vh - 3cm);
+    page-break-inside: avoid;
+  }
+  
+  /* Hide elements that might contain browser info */
+  body * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Print spacer - only visible when printing */
+.print-spacer {
+  display: none;
+}
+
+@media print {
+  .print-spacer {
+    display: block;
+    height: 2cm;
+    width: 100%;
+    opacity: 0;
+  }
+}

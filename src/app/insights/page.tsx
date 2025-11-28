@@ -1,11 +1,11 @@
 'use client';
-
+import { useReactToPrint } from "react-to-print";
 import React, { useEffect, useRef, useState } from 'react';
 import { useTransactionAnalysis } from '@/hooks/useTransactionAnalysis';
 import ReactMarkdown from "react-markdown";
 import TransactionTable from '@/components/TransactionTable';
-import { X, FileText, Eye } from 'lucide-react';
-import { marked } from "marked";
+import { X, FileText, Eye, Printer } from 'lucide-react';
+import { marked } from 'marked';
 import styles from '../Report.module.css';
 
 const apiurl = process.env.NEXT_PUBLIC_API_URL;
@@ -40,6 +40,19 @@ export default function Insights() {
   const tableRef = useRef<HTMLDivElement | null>(null);
   const insightsEndRef = useRef<HTMLDivElement>(null);
   const reportPreviewRef = useRef<HTMLDivElement | null>(null);
+  const reportContentRef = useRef<HTMLDivElement | null>(null);
+
+
+
+  marked.setOptions({
+    breaks: true,
+    gfm: true,
+  });
+
+  const handlePrint = useReactToPrint({
+    contentRef: reportContentRef,
+    documentTitle: "Financial Report",
+  });
 
   const saveToLocalStorage = (key: string, data: any) => {
   if (typeof window !== 'undefined') {
@@ -55,6 +68,7 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
   }
   return defaultValue;
 };
+
 
 
   // Scroll to bottom of insights when new content arrives
@@ -94,7 +108,7 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
     const savedInsights = loadFromLocalStorage('latest_insights', '');
       setInsights(savedInsights);
     }
-  }, [analysis, isStreaming, insights.length]);
+  }, [analysis]);
 
   if (isloading) return <div>Loading...</div>;
   if (!analysis) return <div>No data available</div>;
@@ -307,10 +321,27 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
           </div>
         </div>
 
+        {insights && !isStreaming && ( 
+          <div className="flex flex-col gap-2 justify-evenly items-center mb-5">
+            <h1 className="font-semibold text-lg text-[var(--foreground)] mr-4">
+              Your Financial Report has been generated, click below to view.</h1>
+                  <div className="flex ">
+                    <button
+                      onClick={() => setShowReportPreview(true)}
+                      className=" px-30 py-2 bg-yellow-300 text-black rounded-lg border hover:ring-1 hover:cursor-pointer hover:bg-yellow-500 transition flex items-center gap-2"
+                    >
+                      <Eye size={14} />
+                      View Report
+                    </button>
+                    
+                  </div>
+              </div>
+            )}
+
         {(insights || isStreaming) && (
           <div className="bg-[var(--background)] border rounded p-4 max-w-none text-[var(--foreground)]">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-semibold text-base">AI Insights</h2>
+              <h2 className="font-semibold self-center text-xl">AI Insights</h2>
               <div className="flex items-center gap-2">
                 {isStreaming && (
                   <div className="flex items-center gap-2 text-base text-green-600">
@@ -318,18 +349,7 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
                     <span>Generating...</span>
                   </div>
                 )}
-                {insights && !isStreaming && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setShowReportPreview(true)}
-                      className="px-5 py-2 rounded-lg border hover:ring-1 hover:cursor-pointer transition flex items-center gap-2"
-                    >
-                      <Eye size={14} />
-                      Preview Report
-                    </button>
-                    
-                  </div>
-                )}
+                
               </div>
             </div>
             <div className="prose prose-lg max-w-none min-h-[100px] max-h-[400px] overflow-y-auto">
@@ -365,14 +385,21 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
 
       {/* Report Preview Modal */}
       {showReportPreview && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
           <div
             ref={reportPreviewRef}
-            className="flex flex-col bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-auto"
+            className="flex flex-col bg-white text-black rounded-lg shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-auto"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Report Preview</h2>
               <div className="flex gap-2">
+                <button
+                      onClick={handlePrint}
+                      className="px-5 py-2 rounded-lg border hover:ring-1 hover:cursor-pointer transition flex items-center gap-2"
+                    >
+                      <Printer size={14} />
+                      Print Report
+                    </button>
                 <button
                   className="ml-2 bg-gray-200 text-gray-700 rounded-full p-2 hover:bg-gray-300 transition"
                   onClick={() => setShowReportPreview(false)}          
@@ -383,55 +410,60 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
             </div>
             
             {/* Report Preview Content */}
-            <div className="border rounded p-6 bg-white">
-              <div className="text-center border-b-2 border-blue-800 pb-4 mb-6">
-                <h1 className="text-2xl font-bold text-blue-800">Financial Insights Report</h1>
-                <p className="text-black text-sm">AI-Powered Financial Analysis</p>
-              </div>
-              
-              
-
-              <div className="mb-6">
-                <h3 className="font-semibold text-blue-800 bg-gray-100 px-3 py-2 border-l-4 border-blue-800 mb-3">Report Period</h3>
-                <div className='flex flex-row justify-evenly '>
-                <p className='text-black'><strong>Date Range:</strong> {getDateRangeText(mode, start, end)}</p>
-                <p className='text-black'><strong>Total Transactions:</strong> {InRangeTransactions?.length || 0}</p>
+            <div ref={reportContentRef} className="printable-area">
+              <div className="border rounded p-6 bg-white">
+                <div className="text-center border-b-2 border-blue-800 pb-4 mb-6">
+                  <h1 className="text-2xl font-bold text-blue-800">Financial Insights Report</h1>
+                  <p className="text-black text-sm">AI-Powered Financial Analysis</p>
                 </div>
-              </div>
+                
+                <div className="mb-6">
+                  <h3 className="font-semibold text-blue-800 bg-gray-100 px-3 py-2 border-l-4 border-blue-800 mb-3">Report Period</h3>
+                  <div className='flex flex-row justify-evenly '>
+                    <p className='text-black'><strong>Date Range:</strong> {getDateRangeText(mode, start, end)}</p>
+                    <p className='text-black'><strong>Total Transactions:</strong> {InRangeTransactions?.length || 0}</p>
+                  </div>
+                </div>
 
-              <div className="mb-6">
-                <h3 className="font-semibold text-blue-800 bg-gray-100 px-3 py-2 border-l-4 border-blue-800 mb-3">Financial Summary</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                  <div className="border rounded p-3 text-center bg-white shadow-sm">
-                    <div className="font-bold text-blue-800">{formatCurrency(analysis.summary.incomeTotal || 0)}</div>
-                    <div className="text-xs text-black">Total Income</div>
-                  </div>
-                  <div className="border rounded p-3 text-center bg-white shadow-sm">
-                    <div className="font-bold text-blue-800">{formatCurrency(analysis.summary.expenseTotal || 0)}</div>
-                    <div className="text-xs text-black">Total Expenses</div>
-                  </div>
-                  <div className="border rounded p-3 text-center bg-white shadow-sm">
-                    <div className="font-bold text-blue-800">{formatCurrency(analysis.summary.incomeTotal- analysis.summary.expenseTotal|| 0)}</div>
-                    <div className="text-xs text-black">Net Flow</div>
-                  </div>
-                  {analysis.summary.savingsRate && (
+                <div className="mb-6">
+                  <h3 className="font-semibold text-blue-800 bg-gray-100 px-3 py-2 border-l-4 border-blue-800 mb-3">Financial Summary</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                     <div className="border rounded p-3 text-center bg-white shadow-sm">
-                      <div className="font-bold text-blue-800">{analysis.summary.savingsRate.toFixed(1)}%</div>
-                      <div className="text-xs text-black">Savings Rate</div>
+                      <div className="font-bold text-blue-800">{formatCurrency(analysis.summary.incomeTotal || 0)}</div>
+                      <div className="text-xs text-black">Total Income</div>
                     </div>
+                    <div className="border rounded p-3 text-center bg-white shadow-sm">
+                      <div className="font-bold text-blue-800">{formatCurrency(analysis.summary.expenseTotal || 0)}</div>
+                      <div className="text-xs text-black">Total Expenses</div>
+                    </div>
+                    <div className="border rounded p-3 text-center bg-white shadow-sm">
+                      <div className="font-bold text-blue-800">{formatCurrency(analysis.summary.incomeTotal- analysis.summary.expenseTotal|| 0)}</div>
+                      <div className="text-xs text-black">Net Flow</div>
+                    </div>
+                    {analysis.summary.savingsRate && (
+                      <div className="border rounded p-3 text-center bg-white shadow-sm">
+                        <div className="font-bold text-blue-800">{analysis.summary.savingsRate.toFixed(1)}%</div>
+                        <div className="text-xs text-black">Savings Rate</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+
+                   
+                <div className="mb-6">
+                  <h3 className="font-semibold text-blue-800 bg-gray-100 px-3 py-2 border-l-4 border-blue-800 mb-3">AI Insights & Analysis</h3>
+                  <div className={`${styles.report} text-black border-b-2 px-3 pb-7 border-blue-800`}>
+                  {insights ? (
+                    <div dangerouslySetInnerHTML={{ __html: String(marked(insights))}} />
+                  ) : (
+                    <p className="text-black italic">No insights available</p>
                   )}
                 </div>
-              </div>
-
-              <div className="mb-6">
-                <h3 className="font-semibold text-blue-800 bg-gray-100 px-3 py-2 border-l-4 border-blue-800 mb-3">AI Insights & Analysis</h3>
-                {/* <div className="report-markdown prose prose-sm max-w-none bg-gray-50 text-black p-4 rounded border"> */}
-                  <div className={`${styles.report} text-black border-b-2 px-3 pb-7 border-blue-800` } dangerouslySetInnerHTML={{ __html: marked(insights) }} />
-                {/* </div> */}
-              
-              </div>
-              <div className="text-right text-black text-xs">
-                Generated on: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+                </div>
+                <div className="text-right text-black text-xs mt-4">
+                  Generated on: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+                </div>
               </div>
             </div>
           </div>
