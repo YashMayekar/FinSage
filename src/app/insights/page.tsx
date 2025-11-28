@@ -34,11 +34,12 @@ export default function Insights() {
   const [insights, setInsights] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [showTable, setShowTable] = useState(false);
+  const [scrollToBottom, setScrollToBottom] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
   const [showReportPreview, setShowReportPreview] = useState(false);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
-  const insightsEndRef = useRef<HTMLDivElement>(null);
+  const insightsRef = useRef<HTMLDivElement>(null);
   const reportPreviewRef = useRef<HTMLDivElement | null>(null);
   const reportContentRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,10 +74,10 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
 
   // Scroll to bottom of insights when new content arrives
   useEffect(() => {
-    if (insightsEndRef.current) {
-      insightsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (scrollToBottom && insightsRef.current) {
+      insightsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, []);
+  }, [insights, scrollToBottom]);
 
   useEffect(() => {
   if (!isStreaming && insights.length > 0) {
@@ -93,6 +94,10 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
       if (reportPreviewRef.current && !reportPreviewRef.current.contains(event.target as Node)) {
         setShowReportPreview(false);
       }
+      if (insightsRef.current && !insightsRef.current.contains(event.target as Node)) {
+        setScrollToBottom(false);
+        console.log("Clicked outside insights: Scroll lock disabled - ", scrollToBottom);
+      }
     }
     
     if (showTable || showReportPreview) {
@@ -101,7 +106,7 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showTable, showReportPreview]);
+  }, [showTable, showReportPreview, scrollToBottom]);
 
   useEffect(() => {
     if (analysis && !isStreaming && insights.length === 0) {
@@ -111,7 +116,14 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
   }, [analysis]);
 
   if (isloading) return <div>Loading...</div>;
-  if (!analysis) return <div>No data available</div>;
+  if (!analysis) return (
+        <div className='border p-4 gap-2 rounded-xl flex flex-col justify-center items-center'>
+        <h1 className="rounded-xl text-xl font-bold ">Sorry, No transactions found.</h1>
+        <h1 className="rounded-xl text-xl font-bold ">Please upload some transactions to see analysis.</h1>
+        
+        <a href="/transactions" className='text-yellow-300'>Click here to upload transactions</a>
+        </div>
+      );
 
   // --- Fetch AI Insights with streaming ---
   async function fetchInsights() {
@@ -352,6 +364,7 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
                 
               </div>
             </div>
+            <div ref={insightsRef}>
             <div className="prose prose-lg max-w-none min-h-[100px] max-h-[400px] overflow-y-auto">
               <div className={styles.report}>
               <ReactMarkdown>{insights}</ReactMarkdown>
@@ -359,7 +372,7 @@ const loadFromLocalStorage = (key: string, defaultValue: any) => {
               {isStreaming && (
                 <span className="animate-pulse">▊</span>
               )}
-              <div ref={insightsEndRef} />
+            </div>
             </div>
           </div>
         )}

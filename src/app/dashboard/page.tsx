@@ -148,8 +148,15 @@ export default function Dashboard() {
 
       {/* Loading / Empty */}
       {isloading && <div className="p-4 rounded-xl border">Computing analysis…</div>}
-      {!isloading && (!analysis || analysis.series.dataPoints.length === 0) && (
+      {!isloading && analysis && (analysis.series.dataPoints?.length === 0) && (
         <div className="p-4 rounded-xl border">No data for the selected range.</div>
+      )}
+      {!analysis && !isloading && (
+        <div className='border p-4 gap-2 rounded-xl flex flex-col justify-center items-center'>
+        <h1 className="rounded-xl text-xl font-bold ">Sorry, No transactions found.</h1>
+        <h1 className="rounded-xl text-xl font-bold ">Please upload some transactions to see analysis.</h1>
+        <a href="/transactions" className='text-yellow-300'>Click here to upload transactions</a>
+        </div>
       )}
 
       {!isloading && analysis && (

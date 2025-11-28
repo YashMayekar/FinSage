@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from 'react';
 import { parse } from 'papaparse';
 import { File, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { redirect } from 'next/navigation';
 
 interface Transaction {
   date: string;
@@ -360,6 +361,7 @@ const handleSubmit = async () => {
   } finally {
     setProgress(100);
     setIsLoading(false);
+    window.location.reload();
   }
 };
 
@@ -368,9 +370,9 @@ const handleSubmit = async () => {
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">
-          CSV Importer: {csvData.length > 0 ? `${csvData.length} Records` : 'No File Selected'}
+      <div className="flex justify-center items-center justify-between">
+        <h1 className="text-2xl ">
+          {csvData.length > 0 ? `The selected file contains  ${csvData.length} Records` : 'Upload your CSV here: '}
         </h1>
       </div>
 
