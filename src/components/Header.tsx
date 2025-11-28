@@ -17,10 +17,16 @@ export default function Header() {
     <header className="border-b border-[var(--border)] p-4 bg-[var(--background)] sticky top-0 z-50">
       <div className="flex items-center justify-between">
         
+
+        <button
+            onClick={() => handleNav('/dashboard')}
+          >
         {/* Logo */}
         <h1 className="transition-text duration-300 text-3xl font-bold text-[var(--foreground)]">
           FinSage
         </h1>
+           
+          </button>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
@@ -36,12 +42,12 @@ export default function Header() {
           >
             Transactions
           </button>
-          {/* <button
+          <button
             onClick={() => handleNav('/insights')}
             className="text-xl transition"
           >
             Insights
-          </button> */}
+          </button>
 
           <ThemeSwitcher />
         </nav>
@@ -71,12 +77,12 @@ export default function Header() {
           >
             Transactions
           </button>
-          {/* <button
+          <button
             onClick={() => handleNav('/insights')}
             className="text-lg transition text-left"
           >
             Insights
-          </button> */}
+          </button>
 
           <div className="pt-2">
             <ThemeSwitcher />

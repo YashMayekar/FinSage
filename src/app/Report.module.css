@@ -1,0 +1,67 @@
+.report h1 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-top: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+.report h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.report h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.report p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.report ul {
+  margin: 0.5rem 0 0.5rem 1.2rem;
+  list-style: disc;
+}
+
+.report ol {
+  margin: 0.5rem 0 0.5rem 1.2rem;
+  list-style: decimal;
+}
+
+.report li {
+  margin: 0.3rem 0;
+}
+
+.report strong {
+  font-weight: 700;
+}
+
+.report blockquote {
+  border-left: 3px solid #ccc;
+  padding-left: 0.75rem;
+  margin: 0.8rem 0;
+  color: #555;
+  font-style: italic;
+}
+
+.report code {
+  background: #eee;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: monospace;
+}
+
+.report pre {
+  background: #f5f5f5;
+  padding: 0.75rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
