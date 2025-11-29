@@ -1,7 +1,8 @@
 # FinSage - AI-Powered Financial Transaction Analyzer
 
-![FinSage Dashboard](<img width="1917" height="906" alt="image" src="https://github.com/user-attachments/assets/5c2559d0-8fb9-4ff4-903b-7fc3648bbf5f" />
-)
+![FinSage Dashboard]
+<img width="1917" height="906" alt="image" src="https://github.com/user-attachments/assets/087611cb-eb73-423b-9c9a-49a53e0404fb" />
+
 
 ## 🚀 Overview
 
